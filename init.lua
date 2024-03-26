@@ -162,8 +162,8 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', 'üd', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', 'üd', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '<leader>.p', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', '<leader>.n', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -286,6 +286,7 @@ require('lazy').setup({
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        ['<leader>t'] = { name = '[T]erminal', _ = 'which_key_ignore' },
       }
     end,
   },
@@ -313,7 +314,7 @@ require('lazy').setup({
         -- `cond` is a condition used to determine whether this plugin should be
         -- installed and loaded.
         cond = function()
-          return vim.fn.executable 'make' == 1
+          return vim.fn.executable 'cmake' == 1
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
@@ -535,7 +536,24 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
-        -- rust_analyzer = {},
+        --  rust_analyzer = {
+        --    settings = {
+        --      ['rust-analyzer'] = {
+        --        assist = {
+        --          importMergeBehavior = 'last',
+        --          importPrefix = 'by_self',
+        --        },
+        --        cargo = {
+        --          loadOutDirsFromCheck = true,
+        --        },
+        --        procMacro = {
+        --          enable = true,
+        --        },
+        --      },
+        --    },
+        --    root_dir = require('lspconfig.util').root_pattern('Cargo.toml', 'rust-project.json'),
+        --    filetypes = { 'rust' },
+        --  },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -544,7 +562,21 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         --
-
+        -- azure_pipelines_ls = {
+        --   settings = {
+        --     yaml = {
+        --       schemas = {
+        --         ['https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json'] = {
+        --           '/*',
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
+        angularls = {
+          filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
+          root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -629,9 +661,9 @@ require('lazy').setup({
           -- Build Step is needed for regex support in snippets.
           -- This step is not supported in many windows environments.
           -- Remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-            return
-          end
+          -- if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+          --  return
+          -- end
           return 'make install_jsregexp'
         end)(),
         dependencies = {
