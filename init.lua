@@ -577,6 +577,10 @@ require('lazy').setup({
           filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
           root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
         },
+        tsserver = {
+          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
+          root_dir = require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', '.git'),
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -645,7 +649,9 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { { 'prettierd', 'prettier' } },
+        typescript = { { 'prettierd', 'prettier' } },
+        html = { { 'prettierd', 'prettier' } },
       },
     },
   },
