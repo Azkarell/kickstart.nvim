@@ -93,10 +93,16 @@ return {
   {
     'akinsho/toggleterm.nvim',
     config = function()
-      require('toggleterm').setup {
-        shell = 'pwsh.exe',
-        open_mapping = [[<C-\>]],
-      }
+      if vim.fn.has 'win32' == 1 then
+        require('toggleterm').setup {
+          shell = 'pwsh.exe',
+          open_mapping = [[<C-\>]],
+        }
+      else
+        require('toggleterm').setup {
+          open_mapping = [[<C-\>]],
+        }
+      end
       local opts = { buffer = 0 }
       local Terminal = require('toggleterm.terminal').Terminal
       local lazygit = Terminal:new {
@@ -162,7 +168,7 @@ return {
         debugger = {
           enabled = true,
           run_via_dap = true,
-          register_configurations = function(paths)
+          register_configurations = function(_)
             local file = io.open('.vscode/launch.json', 'r')
             if file ~= nil then
               io.close(file)
@@ -176,6 +182,15 @@ return {
   },
   {
     'sindrets/diffview.nvim',
+    config = function()
+      require('diffview').setup {}
+      vim.keymap.set('n', '<leader>dvo', '<Cmd>DiffviewOpen<Enter>', {
+        desc = 'Open Diffview',
+      })
+      vim.keymap.set('n', '<leader>dvc', '<Cmd>DiffviewClose<Enter>', {
+        desc = 'Close Diffview',
+      })
+    end,
   },
   {
     'saecki/crates.nvim',
