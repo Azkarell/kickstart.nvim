@@ -28,6 +28,11 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+    -- dap.adapters.dart = {
+    --   type = 'executable',
+    --   command = 'fvm flutter',
+    --   args = { 'debug_adapter' },
+    -- }
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
       -- reasonable debug configurations
@@ -82,6 +87,7 @@ return {
     }
 
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
+
     vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open

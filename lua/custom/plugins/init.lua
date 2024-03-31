@@ -3,6 +3,19 @@
 --
 -- See the kickstart.nvim README for more information
 return {
+  {
+    'ray-x/navigator.lua',
+    dependencies = { 'ray-x/guihua.lua' },
+    build = { 'cd lua/fzy && make' },
+    config = function()
+      require('navigator').setup {
+        mason = true,
+        --lsp = {
+        --  servers = { 'csharp-language-server' },
+        --},
+      }
+    end,
+  },
   'sharkdp/fd',
   'BurntSushi/ripgrep',
   'github/copilot.vim',
@@ -12,7 +25,6 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('nvim-tree').setup {
-
         filters = {
           dotfiles = true,
         },
@@ -20,30 +32,30 @@ return {
       vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeToggle<cr>')
     end,
   },
-  {
-    'mrcjkb/rustaceanvim',
-    -- config = function()
-    --   require('rust-tools').setup {
-    --     tools = {
-    --       autoSetHints = true,
-    --       runnables = {
-    --         use_telescope = true,
-    --       },
-    --       inlay_hints = {
-    --         show_parameter_hints = true,
-    --         parameter_hints_prefix = '🤔 ',
-    --         other_hints_prefix = '🔍 ',
-    --       },
-    --     },
-    --     server = {
-    --       on_attach = function(client, bufnr)
-    --         vim.keymap.set('n', 'K', require 'rust-tools.hover_actions', { buffer = bufnr })
-    --         vim.keymap.set('n', '<leader>ca', require 'rust-tools.code_action_group', { buffer = bufnr })
-    --       end,
-    --     },
-    --   }
-    -- end,
-  },
+  -- {
+  --   'mrcjkb/rustaceanvim',
+  --   -- config = function()
+  --   --   require('rust-tools').setup {
+  --   --     tools = {
+  --   --       autoSetHints = true,
+  --   --       runnables = {
+  --   --         use_telescope = true,
+  --   --       },
+  --   --       inlay_hints = {
+  --   --         show_parameter_hints = true,
+  --   --         parameter_hints_prefix = '🤔 ',
+  --   --         other_hints_prefix = '🔍 ',
+  --   --       },
+  --   --     },
+  --   --     server = {
+  --   --       on_attach = function(client, bufnr)
+  --   --         vim.keymap.set('n', 'K', require 'rust-tools.hover_actions', { buffer = bufnr })
+  --   --         vim.keymap.set('n', '<leader>ca', require 'rust-tools.code_action_group', { buffer = bufnr })
+  --   --       end,
+  --   --     },
+  --   --   }
+  --   -- end,
+  -- },
   --  {
   --    'iabdelkareem/csharp.nvim',
   --    dependencies = { 'Tastyep/structlog.nvim', 'williamboman/mason.nvim' },
@@ -102,7 +114,7 @@ return {
           vim.api.nvim_buf_set_keymap(term.bufnr, 'n', 'q', '<cmd>close<CR>', { noremap = true, silent = true })
         end,
         -- function to run on closing the terminal
-        on_close = function(term)
+        on_close = function(_)
           vim.cmd 'startinsert!'
         end,
         close_on_exit = true,
@@ -116,6 +128,7 @@ return {
           lazygit:set_mode 'i'
         end
       end
+
       vim.keymap.set('n', '<leader>tth', '<cmd>ToggleTerm direction=horizontal<cr>', {
         desc = 'Open [h]orizontal [T]erminal',
       })
@@ -139,4 +152,41 @@ return {
     end,
   },
   { 'rmagatti/auto-session', config = true },
+  {
+    'akinsho/flutter-tools.nvim',
+    lazy = false,
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('flutter-tools').setup {
+        fvm = true,
+        debugger = {
+          enabled = true,
+          run_via_dap = true,
+          register_configurations = function(paths)
+            local file = io.open('.vscode/launch.json', 'r')
+            if file ~= nil then
+              io.close(file)
+              require('dap.ext.vscode').load_launchjs()
+            end
+          end,
+        },
+      }
+      require('telescope').load_extension 'flutter'
+    end,
+  },
+  {
+    'sindrets/diffview.nvim',
+  },
+  {
+    'saecki/crates.nvim',
+    tag = 'stable',
+    config = function()
+      require('crates').setup {
+        display = {
+          icon = '📦',
+          auto = true,
+        },
+      }
+    end,
+  },
 }
