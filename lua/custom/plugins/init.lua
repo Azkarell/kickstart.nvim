@@ -3,22 +3,20 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-  {
-    'ray-x/navigator.lua',
-    dependencies = { 'ray-x/guihua.lua' },
-    build = { 'cd lua/fzy && make' },
-    config = function()
-      require('navigator').setup {
-        mason = true,
-        --lsp = {
-        --  servers = { 'csharp-language-server' },
-        --},
-      }
-    end,
-  },
   'sharkdp/fd',
   'BurntSushi/ripgrep',
-  'github/copilot.vim',
+  {
+    'github/copilot.vim',
+    -- config = function()
+    --   vim.keymap.set('i', '<C-y>', 'copilot#Accept("\\<CR>")', {
+    --     expr = true,
+    --     replace_keycodes = false,
+    --   })
+    --   vim.g.copilot_no_tab_map = true
+    -- end,
+  },
+  'folke/zen-mode.nvim',
+
   'nvim-tree/nvim-web-devicons',
   {
     'nvim-tree/nvim-tree.lua',
@@ -89,7 +87,6 @@ return {
       }
     end,
   },
-  { 'windwp/nvim-autopairs', event = 'InsertEnter', config = true },
   {
     'akinsho/toggleterm.nvim',
     config = function()
@@ -203,5 +200,15 @@ return {
         },
       }
     end,
+  },
+  'ThePrimeagen/vim-be-good',
+  {
+    'iamcco/markdown-preview.nvim',
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    build = 'cd app && npm install',
+    init = function()
+      vim.g.mkdp_filetypes = { 'markdown' }
+    end,
+    ft = { 'markdown' },
   },
 }

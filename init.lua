@@ -364,12 +364,23 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>si', function()
+        return builtin.find_files { hidden = true }
+      end, { desc = '[S]earch h[i]dden Files' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader>sp', function()
+        return builtin.live_grep { additional_args = {
+          '--hidden',
+        } }
+      end, { desc = '[S]earch by Gre[p] in Hidden files' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader>se', function()
+        return builtin.diagnostics { severity = 'error' }
+      end, { desc = '[S]earch [e]rror Diagnostics' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
@@ -409,6 +420,7 @@ require('lazy').setup({
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
+      { 'mrcjkb/rustaceanvim', version = '^4', ft = { 'rust' } },
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
@@ -598,6 +610,15 @@ require('lazy').setup({
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'html' },
           root_dir = require('lspconfig.util').root_pattern('.eslintrc.js', '.eslintrc.json', '.eslintrc', '.eslintrc.yml', '.eslintrc.yaml', 'package.json'),
         },
+        wgsl_analyzer = {
+          filetypes = { 'wgsl' },
+          root_dir = require('lspconfig.util').root_pattern('Cargo.toml', '.git'),
+        },
+        omnisharp = {
+          root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
+          enable_roslyn_analyzers = true,
+          enable_import_completion = true,
+        },
         --['csharp-language-server'] = {
         --  filetypes = { 'csharp' },
         --  root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets',
@@ -663,6 +684,64 @@ require('lazy').setup({
       },
     },
   },
+  --{
+  --  'ray-x/navigator.lua',
+  --  dependencies = {
+  --    'neovim/nvim-lspconfig',
+  --    'ray-x/guihua.lua',
+  --    'hrsh7th/nvim-cmp',
+  --    'hrsh7th/nvim-autopairs',
+  --    'williamboman/mason.nvim',
+  --    'williamboman/mason-lspconfig.nvim',
+  --  },
+  --  build = { 'cd lua/fzy && make' },
+  --  config = function()
+  --    require('mason').setup {}
+  --    require('mason-lspconfig').setup {}
+  --    require('navigator').setup {
+  --      mason = true,
+
+  --      lsp = {
+  --        servers = { 'wgsl_analyzer' },
+  --        angularls = {
+  --          filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
+  --          root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
+  --        },
+  --        tsserver = {
+  --          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
+  --          root_dir = require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', '.git'),
+  --        },
+  --        lua_ls = {
+  --          -- cmd = {...},
+  --          -- filetypes = { ...},
+  --          -- capabilities = {},
+  --          settings = {
+  --            Lua = {
+  --              completion = {
+  --                callSnippet = 'Replace',
+  --              },
+  --              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+  --              -- diagnostics = { disable = { 'missing-fields' } },
+  --            },
+  --          },
+  --        },
+  --        eslint = {
+  --          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'html' },
+  --          root_dir = require('lspconfig.util').root_pattern('.eslintrc.js', '.eslintrc.json', '.eslintrc', '.eslintrc.yml', '.eslintrc.yaml', 'package.json'),
+  --        },
+  --        wgsl_analyzer = {
+  --          filetypes = { 'wgsl' },
+  --          root_dir = require('lspconfig.util').root_pattern('Cargo.toml', '.git'),
+  --        },
+  --        omnisharp = {
+  --          root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
+  --          enable_roslyn_analyzers = true,
+  --          enable_import_completion = true,
+  --        },
+  --      },
+  --    }
+  --  end,
+  --},
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -702,6 +781,8 @@ require('lazy').setup({
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
+      'hrsh7th/nvim-autopairs',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     config = function()
       -- See `:help cmp`
@@ -770,7 +851,7 @@ require('lazy').setup({
           { name = 'path', keyword_length = 0 },
           { name = 'nuget', keyword_length = 0 },
           { name = 'buffer' },
-          { name = 'copilot' },
+          { name = 'nvim_lsp_signature_help' },
         },
       }
       -- cmp.setup.cmdline(':', {
@@ -785,6 +866,12 @@ require('lazy').setup({
       --     { { name = 'copilot' } },
       --   },
       -- })
+      require('nvim-autopairs').setup {
+        disable_filetype = { 'TelescopePrompt', 'guihua', 'guihua_rust', 'clap_input' },
+      }
+      if vim.o.ft == 'clap_input' and vim.o.ft == 'guihua' and vim.o.ft == 'guihua_rust' then
+        require('cmp').setup.buffer { completion = { enable = false } }
+      end
     end,
   },
 
