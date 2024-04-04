@@ -2,6 +2,7 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
+vim.g.copilot_enabled = false
 return {
   'sharkdp/fd',
   'BurntSushi/ripgrep',
@@ -27,7 +28,12 @@ return {
           dotfiles = true,
         },
       }
-      vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeToggle<cr>')
+      vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeToggle<cr>', {
+        desc = 'Toggle Tree',
+      })
+      vim.keymap.set('n', '<leader>nf', '<cmd>NvimTreeFindFile<cr>', {
+        desc = 'Fi[n]d [f]ile in tree',
+      })
     end,
   },
   -- {
@@ -69,6 +75,7 @@ return {
   {
     'gen740/SmoothCursor.nvim',
     config = function()
+      ---@diagnostic disable-next-line: missing-fields
       require('smoothcursor').setup {
         fancy = {
           enable = true,

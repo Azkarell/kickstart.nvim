@@ -381,6 +381,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>se', function()
         return builtin.diagnostics { severity = 'error' }
       end, { desc = '[S]earch [e]rror Diagnostics' })
+      vim.keymap.set('n', '<leader>st', function()
+        return builtin.diagnostics { severity = 'warning' }
+      end, { desc = '[S]earch warnings Diagnos[t]ics' })
+
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
@@ -424,6 +428,7 @@ require('lazy').setup({
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
+      { 'Hoffs/omnisharp-extended-lsp.nvim' },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -618,6 +623,12 @@ require('lazy').setup({
           root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
           enable_roslyn_analyzers = true,
           enable_import_completion = true,
+          handlers = {
+            ['textDocument/definition'] = require('omnisharp_extended').definition_handler,
+            ['textDocument/typeDefinition'] = require('omnisharp_extended').type_definition_handler,
+            ['textDocument/references'] = require('omnisharp_extended').references_handler,
+            ['textDocument/implementation'] = require('omnisharp_extended').implementation_handler,
+          },
         },
         --['csharp-language-server'] = {
         --  filetypes = { 'csharp' },
@@ -781,7 +792,7 @@ require('lazy').setup({
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
-      'hrsh7th/nvim-autopairs',
+      'windwp/nvim-autopairs',
       'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     config = function()
