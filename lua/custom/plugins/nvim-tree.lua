@@ -6,6 +6,9 @@ return {
       require('nvim-tree').setup {
         filters = {
           dotfiles = true,
+          custom = {
+            '**/bin',
+          },
         },
       }
       vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeFindFile<cr>', {

@@ -48,6 +48,11 @@ return {
         end,
         desc = 'Show floating Diagnostics',
       },
+      {
+        '<leader>xt',
+        '<cmd>TodoTrouble<cr>',
+        desc = 'Todo',
+      },
     },
   },
 }
