@@ -94,6 +94,7 @@ vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
 
+vim.g.OmniSharp_server_use_net6 = 1
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -103,7 +104,7 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -163,8 +164,6 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>.p', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', '<leader>.n', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -343,12 +342,20 @@ require('lazy').setup({
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
 
+      local open_with_trouble = require('trouble.sources.telescope').open
+      local add_to_trouble = require('trouble.sources.telescope').add
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         -- pickers = {}
+        defaults = {
+          mappings = {
+            i = { ['<c-e>'] = open_with_trouble },
+            n = { ['<c-e>'] = open_with_trouble },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -366,6 +373,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
       vim.keymap.set('n', '<leader>si', function()
         return builtin.find_files { hidden = true }
       end, { desc = '[S]earch h[i]dden Files' })
@@ -387,6 +395,9 @@ require('lazy').setup({
 
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>gc', builtin.git_commits, { desc = '[G]it [C]ommits' })
+      vim.keymap.set('n', '<leader>gb', builtin.git_bcommits, { desc = '[G]it [B]uffer commits' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -424,7 +435,6 @@ require('lazy').setup({
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
-      { 'mrcjkb/rustaceanvim', version = '^4', ft = { 'rust' } },
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
@@ -512,6 +522,7 @@ require('lazy').setup({
           --  For example, in C this would take you to the header.
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
+          map('<C-k>', vim.lsp.buf.signature_help, 'Signature help')
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
@@ -619,17 +630,17 @@ require('lazy').setup({
           filetypes = { 'wgsl' },
           root_dir = require('lspconfig.util').root_pattern('Cargo.toml', '.git'),
         },
-        omnisharp = {
-          root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
-          enable_roslyn_analyzers = true,
-          enable_import_completion = true,
-          handlers = {
-            ['textDocument/definition'] = require('omnisharp_extended').definition_handler,
-            ['textDocument/typeDefinition'] = require('omnisharp_extended').type_definition_handler,
-            ['textDocument/references'] = require('omnisharp_extended').references_handler,
-            ['textDocument/implementation'] = require('omnisharp_extended').implementation_handler,
-          },
-        },
+        --omnisharp = {
+        --  root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
+        --  enable_roslyn_analyzers = true,
+        --  enable_import_completion = true,
+        --  handlers = {
+        --    ['textDocument/definition'] = require('omnisharp_extended').definition_handler,
+        --    ['textDocument/typeDefinition'] = require('omnisharp_extended').type_definition_handler,
+        --    ['textDocument/references'] = require('omnisharp_extended').references_handler,
+        --    ['textDocument/implementation'] = require('omnisharp_extended').implementation_handler,
+        --  },
+        --},
         --['csharp-language-server'] = {
         --  filetypes = { 'csharp' },
         --  root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets',
@@ -827,7 +838,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<Enter>'] = cmp.mapping.confirm { select = true },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -925,21 +936,6 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
-
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
@@ -948,7 +944,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'markdown_inline' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -994,6 +990,7 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   { import = 'custom.plugins' },
+  { import = 'custom.mappings' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1015,6 +1012,5 @@ require('lazy').setup({
     },
   },
 })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

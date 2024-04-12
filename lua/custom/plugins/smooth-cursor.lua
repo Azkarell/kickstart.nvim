@@ -1,0 +1,24 @@
+return {
+  -- {
+  --   'gen740/SmoothCursor.nvim',
+  --   config = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     require('smoothcursor').setup {
+  --       fancy = {
+  --         enable = true,
+  --         head = {},
+  --         body = {
+  --           { cursor = '󰝥', texthl = 'SmoothCursorRed' },
+  --           { cursor = '󰝥', texthl = 'SmoothCursorOrange' },
+  --           { cursor = '●', texthl = 'SmoothCursorYellow' },
+  --           { cursor = '●', texthl = 'SmoothCursorGreen' },
+  --           { cursor = '•', texthl = 'SmoothCursorAqua' },
+  --           { cursor = '.', texthl = 'SmoothCursorBlue' },
+  --           { cursor = '.', texthl = 'SmoothCursorPurple' },
+  --         },
+  --         tail = {},
+  --       },
+  --     }
+  --   end,
+  -- },
+}
