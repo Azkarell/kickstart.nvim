@@ -20,6 +20,7 @@ return {
         lualine_z = { 'location' },
       }
 
+      opts.theme = 'catppuccin'
       opts.extensions = { 'quickfix' }
     end,
   },

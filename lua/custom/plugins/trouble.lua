@@ -2,12 +2,30 @@ return {
   {
     'folke/trouble.nvim',
     branch = 'dev',
-    opts = {},
+    opts = {
+      modes = {
+        work = {
+          mode = 'diagnostics', -- inherit from diagnostics mode
+          filter = {
+            any = {
+              buf = 0, -- current buffer
+              {
+                severity = vim.diagnostic.severity.ERROR, -- errors only
+                -- limit to files in the current project
+                function(item)
+                  return item.filename:find(vim.loop.cwd(), 1, true)
+                end,
+              },
+            },
+          },
+        },
+      },
+    },
     keys = {
       {
         '<leader>xx',
-        '<cmd>Trouble diagnostics toggle<cr>',
-        desc = 'Diagnostics (Trouble)',
+        '<cmd>Trouble work toggle<cr>',
+        desc = 'Workspace diagnostics (Trouble)',
       },
       {
         '<leader>xX',

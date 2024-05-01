@@ -7,6 +7,7 @@ return {
     require('roslyn').setup {
       on_attach = function() end,
       capabilities = capabilities,
+      rosyln_version = '4.9.0-3.23604.10',
     }
   end,
 }

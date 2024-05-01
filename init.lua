@@ -1,5 +1,4 @@
 --[[
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -43,7 +42,6 @@ What is Kickstart?
 
 Kickstart Guide:
 
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
 
     If you don't know what this means, type the following:
       - <escape key>
@@ -287,6 +285,7 @@ require('lazy').setup({
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '[T]erminal', _ = 'which_key_ignore' },
+        ['<leader>x'] = { name = '[X]rouble', _ = 'which_key_ignore' },
       }
     end,
   },
@@ -352,8 +351,8 @@ require('lazy').setup({
         -- pickers = {}
         defaults = {
           mappings = {
-            i = { ['<c-e>'] = open_with_trouble },
-            n = { ['<c-e>'] = open_with_trouble },
+            i = { ['<c-e>'] = open_with_trouble, ['<c-q>'] = require('telescope.actions').file_vsplit },
+            n = { ['<c-e>'] = open_with_trouble, ['<c-q>'] = require('telescope.actions').file_vsplit },
           },
         },
         extensions = {
@@ -435,12 +434,17 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {
+        notification = {
+          window = {
+            winblend = 0,
+          },
+        },
+      } },
 
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
-      { 'Hoffs/omnisharp-extended-lsp.nvim' },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -472,6 +476,24 @@ require('lazy').setup({
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
       --    function will be executed to configure the current buffer
+      --vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+      --  group = vim.api.nvim_create_augroup('own-lsp-codelens', { clear = true }),
+      --  callback = function(event)
+      --    local clients = vim.lsp.get_clients {
+      --      method = 'textDocument/codeLens',
+      --    }
+      --    print('clients: ', table.getn(clients))
+      --    if not clients == nil then
+      --      print 'client found '
+      --      vim.lsp.codelens.refresh {
+      --        bufnr = event.buf,
+      --      }
+      --      local lenses = vim.lsp.codelens.get(event.buf)
+      --      print(vim.inspecT(lenses))
+      --      vim.lsp.codelens.display(lenses, event.buf, clients[1].id)
+      --    end
+      --  end,
+      --})
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -483,7 +505,6 @@ require('lazy').setup({
           local map = function(keys, func, desc)
             vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
-
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
@@ -550,6 +571,9 @@ require('lazy').setup({
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities.textDocument.codeLens = {
+        dynamicRegistration = true,
+      }
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       -- Enable the following language servers
@@ -561,29 +585,8 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        --  rust_analyzer = {
-        --    settings = {
-        --      ['rust-analyzer'] = {
-        --        assist = {
-        --          importMergeBehavior = 'last',
-        --          importPrefix = 'by_self',
-        --        },
-        --        cargo = {
-        --          loadOutDirsFromCheck = true,
-        --        },
-        --        procMacro = {
-        --          enable = true,
-        --        },
-        --      },
-        --    },
-        --    root_dir = require('lspconfig.util').root_pattern('Cargo.toml', 'rust-project.json'),
-        --    filetypes = { 'rust' },
-        --  },
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
@@ -602,6 +605,7 @@ require('lazy').setup({
         --     },
         --   },
         -- },
+
         angularls = {
           filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
           root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
@@ -624,6 +628,7 @@ require('lazy').setup({
             },
           },
         },
+
         eslint = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'html' },
           root_dir = require('lspconfig.util').root_pattern('.eslintrc.js', '.eslintrc.json', '.eslintrc', '.eslintrc.yml', '.eslintrc.yaml', 'package.json'),
@@ -666,10 +671,20 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      --servers.cucumber_langauge_server = {
+      --  settings = {
+      --    glue = { '*Steps*/**/*.cs' },
+      --  },
+      --}
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
+            if server_name == 'rust_analyzer' or server_name == 'sonarlint.nvim' then
+              print 'skipping config'
+              return
+            end
             local server = servers[server_name] or {}
+
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
@@ -686,10 +701,19 @@ require('lazy').setup({
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
+        local disable_filetypes = { c = true, cpp = true }
+        vim.keymap.set('n', '<leader>f', function()
+          require('conform').format {
+            async = true,
+            lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          }
+        end, {
+          desc = '[F]ormat buffer',
+        })
+
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
         return {
           timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
@@ -708,64 +732,6 @@ require('lazy').setup({
       },
     },
   },
-  --{
-  --  'ray-x/navigator.lua',
-  --  dependencies = {
-  --    'neovim/nvim-lspconfig',
-  --    'ray-x/guihua.lua',
-  --    'hrsh7th/nvim-cmp',
-  --    'hrsh7th/nvim-autopairs',
-  --    'williamboman/mason.nvim',
-  --    'williamboman/mason-lspconfig.nvim',
-  --  },
-  --  build = { 'cd lua/fzy && make' },
-  --  config = function()
-  --    require('mason').setup {}
-  --    require('mason-lspconfig').setup {}
-  --    require('navigator').setup {
-  --      mason = true,
-
-  --      lsp = {
-  --        servers = { 'wgsl_analyzer' },
-  --        angularls = {
-  --          filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
-  --          root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
-  --        },
-  --        tsserver = {
-  --          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
-  --          root_dir = require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', '.git'),
-  --        },
-  --        lua_ls = {
-  --          -- cmd = {...},
-  --          -- filetypes = { ...},
-  --          -- capabilities = {},
-  --          settings = {
-  --            Lua = {
-  --              completion = {
-  --                callSnippet = 'Replace',
-  --              },
-  --              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-  --              -- diagnostics = { disable = { 'missing-fields' } },
-  --            },
-  --          },
-  --        },
-  --        eslint = {
-  --          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'html' },
-  --          root_dir = require('lspconfig.util').root_pattern('.eslintrc.js', '.eslintrc.json', '.eslintrc', '.eslintrc.yml', '.eslintrc.yaml', 'package.json'),
-  --        },
-  --        wgsl_analyzer = {
-  --          filetypes = { 'wgsl' },
-  --          root_dir = require('lspconfig.util').root_pattern('Cargo.toml', '.git'),
-  --        },
-  --        omnisharp = {
-  --          root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
-  --          enable_roslyn_analyzers = true,
-  --          enable_import_completion = true,
-  --        },
-  --      },
-  --    }
-  --  end,
-  --},
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -876,6 +842,7 @@ require('lazy').setup({
           { name = 'nuget', keyword_length = 0 },
           { name = 'buffer' },
           { name = 'nvim_lsp_signature_help' },
+          { name = 'crates' },
         },
       }
       -- cmp.setup.cmdline(':', {
@@ -927,6 +894,12 @@ require('lazy').setup({
         integrations = {
           telescope = true,
           mason = true,
+          cmp = true,
+          treesitter = true,
+          mini = {
+            enabled = true,
+          },
+          dashboard = true,
         },
       }
     end,
