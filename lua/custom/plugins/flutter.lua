@@ -7,7 +7,7 @@ return {
       require('flutter-tools').setup {
         fvm = true,
         debugger = {
-          enabled = true,
+          enabled = false,
           run_via_dap = true,
           register_configurations = function(_)
             local file = io.open('.vscode/launch.json', 'r')
