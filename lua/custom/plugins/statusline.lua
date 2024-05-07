@@ -15,7 +15,12 @@ return {
         lualine_a = { 'mode' },
         lualine_b = { 'branch', 'diff', 'diagnostics' },
         lualine_c = { 'filename' },
-        lualine_x = { 'encoding', 'fileformat', 'filetype', { symbols.get, cond = symbols.has } },
+        lualine_x = {
+          'encoding',
+          'fileformat',
+          'filetype',
+          { symbols.get, cond = symbols.has },
+        },
         lualine_y = { 'progress' },
         lualine_z = { 'location' },
       }

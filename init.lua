@@ -77,6 +77,12 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+vim.filetype.add {
+  extension = {
+    slint = 'slint',
+  },
+}
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -84,7 +90,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
---
+
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
@@ -233,9 +239,7 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
-
-      -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-telescope/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -267,8 +271,8 @@ require('lazy').setup({
         -- pickers = {}
         defaults = {
           mappings = {
-            i = { ['<c-e>'] = open_with_trouble, ['<c-q>'] = require('telescope.actions').file_vsplit },
-            n = { ['<c-e>'] = open_with_trouble, ['<c-q>'] = require('telescope.actions').file_vsplit },
+            i = { ['<c-e>'] = open_with_trouble, ['<c-ü>'] = require('telescope.actions').file_vsplit },
+            n = { ['<c-e>'] = open_with_trouble, ['<c-ü>'] = require('telescope.actions').file_vsplit },
           },
         },
         extensions = {
@@ -281,9 +285,11 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
-
+      pcall(require('telescope').load_extension, 'noice')
+      pcall(require('telescope').load_extension, 'yank_history')
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+      vim.keymap.set('n', '<leader>sy', require('telescope').extensions.yank_history.yank_history, { desc = '[S]earch [Y]ank' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
@@ -311,7 +317,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>st', '<cmd>TodoTelescope<cr>', { desc = '[S]earch [T]odos)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
+      vim.keymap.set('n', '<leader>n', '<cmd>Telescope noice<cr>', { desc = '[N]oice' })
       vim.keymap.set('n', '<leader>gc', builtin.git_commits, { desc = '[G]it [C]ommits' })
       vim.keymap.set('n', '<leader>gb', builtin.git_bcommits, { desc = '[G]it [B]uffer commits' })
       vim.keymap.set('n', '<leader>gs', builtin.git_stash, { desc = '[G]it [S]tash' })
@@ -319,10 +325,7 @@ require('lazy').setup({
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
+        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {})
       end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
@@ -478,6 +481,9 @@ require('lazy').setup({
               buffer = event.buf,
               callback = vim.lsp.buf.clear_references,
             })
+          end
+          if client and client.name == 'rust_analyzer' then
+            map('<leader>ca', '<cmd>RustLsp codeAction<cr>', '[C]ode [A]ction')
           end
         end,
       })
