@@ -1,4 +1,6 @@
 return {
+  --'azkarell/roslyn.nvim',
+  -- branch = 'test',
   'jmederosalvarado/roslyn.nvim',
   config = function()
     local capabilities = vim.lsp.protocol.make_client_capabilities()

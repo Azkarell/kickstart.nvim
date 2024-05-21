@@ -413,6 +413,8 @@ require('lazy').setup({
       --    end
       --  end,
       --})
+      require('mason').setup()
+
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -508,6 +510,8 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 
+      local mason_registry = require 'mason-registry'
+      local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
       local servers = {
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -533,9 +537,19 @@ require('lazy').setup({
           root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
         },
         tsserver = {
-          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
+          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx', 'javascript', 'vue' },
           root_dir = require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', '.git'),
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = vue_language_server_path,
+                languages = { 'vue' },
+              },
+            },
+          },
         },
+        volar = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -583,7 +597,6 @@ require('lazy').setup({
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      require('mason').setup()
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -765,6 +778,7 @@ require('lazy').setup({
           { name = 'buffer' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'crates' },
+          { name = 'orgmode' },
         },
       }
       -- cmp.setup.cmdline(':', {
