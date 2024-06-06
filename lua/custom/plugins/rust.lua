@@ -19,6 +19,9 @@ return {
   },
   {
     'mrcjkb/rustaceanvim',
+    dependencies = {
+      'williamboman/mason.nvim',
+    },
     version = '^4',
     lazy = false,
     ft = { 'rust' },

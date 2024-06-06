@@ -271,8 +271,8 @@ require('lazy').setup({
         -- pickers = {}
         defaults = {
           mappings = {
-            i = { ['<c-e>'] = open_with_trouble, ['<c-ü>'] = require('telescope.actions').file_vsplit },
-            n = { ['<c-e>'] = open_with_trouble, ['<c-ü>'] = require('telescope.actions').file_vsplit },
+            i = { ['<c-e>'] = open_with_trouble, ['<c-w>'] = require('telescope.actions').file_vsplit },
+            n = { ['<c-e>'] = open_with_trouble, ['<c-w>'] = require('telescope.actions').file_vsplit },
           },
         },
         extensions = {
@@ -531,7 +531,6 @@ require('lazy').setup({
         --     },
         --   },
         -- },
-
         angularls = {
           filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
           root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
@@ -606,20 +605,24 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      --servers.cucumber_langauge_server = {
-      --  settings = {
-      --    glue = { '*Steps*/**/*.cs' },
-      --  },
-      --}
+      servers.cucumber_language_server = {
+
+        handlers = {
+          ['workspace/configuration'] = function(param, param2)
+            return { {
+              features = { '**/Features/**/*.feature' },
+              glue = { '**/Steps/**/*.cs' },
+            } }
+          end,
+        },
+      }
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
             if server_name == 'rust_analyzer' or server_name == 'sonarlint.nvim' then
-              print 'skipping config'
               return
             end
             local server = servers[server_name] or {}
-
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
