@@ -639,7 +639,7 @@ require('lazy').setup({
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, xml = true }
         vim.keymap.set('n', '<leader>f', function()
           require('conform').format {
             async = true,
