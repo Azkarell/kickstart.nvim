@@ -22,7 +22,7 @@ return {
     dependencies = {
       'williamboman/mason.nvim',
     },
-    version = '^4',
+    version = '^6',
     lazy = false,
     ft = { 'rust' },
   },
