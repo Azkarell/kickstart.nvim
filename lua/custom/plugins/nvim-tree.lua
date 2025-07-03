@@ -11,9 +11,9 @@ return {
           },
         },
       }
-      vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeFindFile<cr>', {
-        desc = 'Toggle Tree',
-      })
+      -- vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeFindFile<cr>', {
+      -- desc = 'Toggle Tree',
+      -- })
     end,
   },
 }

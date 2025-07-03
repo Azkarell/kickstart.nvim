@@ -348,7 +348,7 @@ require('lazy').setup({
   {
     'mason-org/mason-lspconfig.nvim',
     opts = {
-      ensure_installed = { 'lua_ls', 'rust_analyzer' },
+      ensure_installed = { 'lua_ls' },
     },
     dependencies = {
       { 'mason-org/mason.nvim', opts = {} },
@@ -426,8 +426,9 @@ require('lazy').setup({
               callback = vim.lsp.buf.clear_references,
             })
           end
-          if client and client.name == 'rust_analyzer' then
+          if client and client.name == 'rust-analyzer' then
             map('<leader>ca', '<cmd>RustLsp codeAction<cr>', '[C]ode [A]ction')
+            map('<leader>ch', '<cmd>RustLsp hover actions<cr>', 'Rust Hover')
           end
         end,
       })
@@ -993,13 +994,5 @@ require('lazy').setup({
   },
 })
 
-local parsers = require('nvim-treesitter.parsers').get_parser_configs()
-parsers.c3 = {
-  install_info = {
-    url = 'https://github.com/c3lang/tree-sitter-c3',
-    files = { 'src/parser.c', 'src/scanner.c' },
-    branch = 'main',
-  },
-}
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
