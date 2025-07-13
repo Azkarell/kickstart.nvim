@@ -29,6 +29,19 @@ vim.opt.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
+vim.g.clipboard = 'wl-copy'
+--local osc52 = require 'vim.ui.clipboard.osc52'
+--vim.g.clipboard = {
+--  name = 'OSC 52',
+--  copy = {
+--    ['+'] = osc52.copy '+',
+--    ['*'] = osc52.copy '*',
+--  },
+--  paste = {
+--    ['+'] = osc52.paste '+',
+--    ['*'] = osc52.paste '*',
+--  },
+--}
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -873,30 +886,30 @@ require('lazy').setup({
   --    vim.cmd.hi 'Comment gui=none'
   --  end,
   --},
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    config = function()
-      require('catppuccin').setup {
-        flavour = 'mocha',
-        transparent_background = true,
-        integrations = {
-          telescope = true,
-          mason = true,
-          cmp = true,
-          treesitter = true,
-          mini = {
-            enabled = true,
-          },
-          dashboard = true,
-        },
-      }
-    end,
-    init = function()
-      vim.cmd.colorscheme 'catppuccin'
-    end,
-  },
+  --{
+  --  'catppuccin/nvim',
+  --  name = 'catppuccin',
+  --  priority = 1000,
+  --  config = function()
+  --    require('catppuccin').setup {
+  --      flavour = 'mocha',
+  --      transparent_background = true,
+  --      integrations = {
+  --        telescope = true,
+  --        mason = true,
+  --        cmp = true,
+  --        treesitter = true,
+  --        mini = {
+  --          enabled = true,
+  --        },
+  --        dashboard = true,
+  --      },
+  --    }
+  --  end,
+  --  init = function()
+  --    vim.cmd.colorscheme 'catppuccin'
+  --  end,
+  --},
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 

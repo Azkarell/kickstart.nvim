@@ -10,7 +10,7 @@ return {
       workspaces = {
         {
           name = 'personal',
-          path = 'e:/vaults/personal_vault',
+          path = '~/vaults/personal_vault',
         },
       },
     },
