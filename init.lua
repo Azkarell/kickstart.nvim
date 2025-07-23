@@ -240,19 +240,7 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      { -- If encountering errors, see telescope-fzf-native README for installation instructions
-        'nvim-telescope/telescope-fzf-native.nvim',
-
-        -- `build` is used to run some command when the plugin is installed/updated.
-        -- This is only run then, not every time Neovim starts up.
-        build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
-
-        -- `cond` is a condition used to determine whether this plugin should be
-        -- installed and loaded.
-        cond = function()
-          return vim.fn.executable 'cmake' == 1
-        end,
-      },
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-telescope/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
@@ -845,7 +833,9 @@ require('lazy').setup({
           { name = 'buffer' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'crates' },
-          { name = 'orgmode' },
+          -- { name = 'orgmode' },
+          { name = 'neorg' },
+          { name = 'render-markdown' },
         },
       }
       -- cmp.setup.cmdline(':', {

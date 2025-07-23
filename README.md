@@ -65,7 +65,8 @@ fork to your machine using one of the commands below, depending on your OS.
 > If following the recommended step above (i.e., forking the repo), replace
 > `nvim-lua` with `<your_github_username>` in the commands below
 
-<details><summary> Linux and Mac </summary>
+<details>
+  <summary> Linux and Mac </summary>
 
 ```sh
 git clone https://github.com/nvim-lua/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
@@ -129,6 +130,7 @@ return {
     -- If you want to automatically add `(` after selecting a function or method
     local cmp_autopairs = require('nvim-autopairs.completion.cmp')
     local cmp = require('cmp')
+    
     cmp.event:on(
       'confirm_done',
       cmp_autopairs.on_confirm_done()
