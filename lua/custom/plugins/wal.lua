@@ -8,12 +8,20 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
+      local C = require('neopywal').get_colors()
       require('neopywal').setup {
+
         transparent_background = true,
         use_wallust = true,
         plugins = {
+          telescope = {
+            enabled = true,
+          },
+          treesitter = true,
+          surround = true,
           nvimtree = true,
           noice = true,
+          notify = true,
           mini = {
             pick = true,
           },
@@ -42,8 +50,8 @@ return {
         },
       }
       vim.cmd.colorscheme 'neopywal-dark'
-      -- local fwatch = require 'fwatch'
-      -- fwatch.watch('/home/azkarell/.cache/wal/colors-wal.vim', 'colorscheme neopywal')
+      local fwatch = require 'fwatch'
+      fwatch.watch('/home/azkarell/.cache/wal/colors-wal.vim', 'colorscheme neopywal')
     end,
   },
 }
