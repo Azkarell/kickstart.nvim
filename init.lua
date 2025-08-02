@@ -282,6 +282,9 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          zoxide = {
+            prompt_title = 'Just raise your head',
+          },
         },
       }
 
@@ -997,5 +1000,6 @@ require('lazy').setup({
   },
 })
 
+vim.cmd.colorscheme 'catppuccin-mocha'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

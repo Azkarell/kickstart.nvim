@@ -49,9 +49,6 @@ return {
           },
         },
       }
-      vim.cmd.colorscheme 'neopywal-dark'
-      local fwatch = require 'fwatch'
-      fwatch.watch('/home/azkarell/.cache/wal/colors-wal.vim', 'colorscheme neopywal')
     end,
   },
 }
