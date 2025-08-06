@@ -1,3 +1,3 @@
 return {
-  { 'jvgrootveld/telescope-zoxide' },
+  --  { 'jvgrootveld/telescope-zoxide' },
 }

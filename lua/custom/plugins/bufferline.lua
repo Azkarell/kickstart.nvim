@@ -4,8 +4,10 @@ return {
     dependencies = 'nvim-tree/nvim-web-devicons',
     config = function()
       require('bufferline').setup {
-        highlights = require('neopywal.theme.plugins.bufferline').setup(),
+        --  highlights = require('neopywal.theme.plugins.bufferline').setup(),
+        highlights = require('catppuccin.groups.integrations.bufferline').get(),
         options = {
+
           diagnostics = 'nvim_lsp',
         },
       }

@@ -21,7 +21,7 @@ return {
           'filetype',
           { symbols.get, cond = symbols.has },
         },
-        lualine_y = { 'progress' },
+        lualine_y = { 'progress', 'lsp_progress' },
         lualine_z = { 'location' },
       }
 
@@ -51,7 +51,6 @@ return {
           z = { 'bold' },
         },
       }
-      opts.theme = 'neopywal'
     end,
   },
 }
