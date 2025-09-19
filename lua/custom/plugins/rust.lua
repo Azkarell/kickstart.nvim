@@ -17,12 +17,12 @@ return {
       }
     end,
   },
-  {
-    'mrcjkb/rustaceanvim',
-    dependencies = {
-      'williamboman/mason.nvim',
-    },
-    version = '^6',
-    lazy = false,
-  },
+  --{
+  --  'mrcjkb/rustaceanvim',
+  --  dependencies = {
+  --    'williamboman/mason.nvim',
+  --  },
+  --  version = '^6',
+  --  lazy = false,
+  --},
 }

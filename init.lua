@@ -375,14 +375,14 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          -- map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
-          -- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          -- map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -862,52 +862,12 @@ require('lazy').setup({
     end,
   },
 
-  --{ -- You can easily change to a different colorscheme.
-  --  -- Change the name of the colorscheme plugin below, and then
-  --  -- change the command in the config to whatever the name of that colorscheme is.
-  --  --
-  --  -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  --  'folke/tokyonight.nvim',
-  --  priority = 1000, -- Make sure to load this before all the other start plugins.
-  --  init = function()
-  --    -- Load the colorscheme here.
-  --    -- Like many other themes, this one has different styles, and you could load
-  --    -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  --    vim.cmd.colorscheme 'tokyonight-night'
-
-  --    -- You can configure highlights by doing something like:
-  --    vim.cmd.hi 'Comment gui=none'
-  --  end,
-  --},
-  --{
-  --  'catppuccin/nvim',
-  --  name = 'catppuccin',
-  --  priority = 1000,
-  --  config = function()
-  --    require('catppuccin').setup {
-  --      flavour = 'mocha',
-  --      transparent_background = true,
-  --      integrations = {
-  --        telescope = true,
-  --        mason = true,
-  --        cmp = true,
-  --        treesitter = true,
-  --        mini = {
-  --          enabled = true,
-  --        },
-  --        dashboard = true,
-  --      },
-  --    }
-  --  end,
-  --  init = function()
-  --    vim.cmd.colorscheme 'catppuccin'
-  --  end,
-  --},
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
+    'nvim-mini/mini.nvim',
+    version = '*',
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -999,7 +959,9 @@ require('lazy').setup({
     },
   },
 })
-
+for _, bind in ipairs { 'grn', 'gra', 'gri', 'grr', 'grt' } do
+  pcall(vim.keymap.del, 'n', bind)
+end
 vim.cmd.colorscheme 'catppuccin-mocha'
 vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'Normal' })
 vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'None' })
