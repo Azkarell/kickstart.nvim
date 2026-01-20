@@ -87,6 +87,7 @@ vim.opt.scrolloff = 10
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
+
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
@@ -242,6 +243,7 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
       { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-lua/popup.nvim' },
       { 'nvim-telescope/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
@@ -279,6 +281,10 @@ require('lazy').setup({
           },
         },
         extensions = {
+          media_files = {
+            filetypes = { 'png', 'webp', 'jpg', 'jpeg', 'mp4', 'pdf' },
+            find_cmd = 'rg',
+          },
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
@@ -293,6 +299,9 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'noice')
       pcall(require('telescope').load_extension, 'yank_history')
+      pcall(require('telescope').load_extension, 'media_files')
+      pcall(require('telescope').load_extension, 'zoxide')
+
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sy', require('telescope').extensions.yank_history.yank_history, { desc = '[S]earch [Y]ank' })
@@ -962,8 +971,16 @@ require('lazy').setup({
 for _, bind in ipairs { 'grn', 'gra', 'gri', 'grr', 'grt' } do
   pcall(vim.keymap.del, 'n', bind)
 end
+vim.api.nvim_create_autocmd('RecordingEnter', {
+  callback = function()
+    vim.opt.cmdheight = 1
+  end,
+})
+vim.api.nvim_create_autocmd('RecordingLeave', {
+  callback = function()
+    vim.opt.cmdheight = 0
+  end,
+})
 vim.cmd.colorscheme 'catppuccin-mocha'
 vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'Normal' })
 vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'None' })
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et

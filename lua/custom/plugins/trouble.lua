@@ -23,7 +23,7 @@ return {
     keys = {
       {
         '<leader>xx',
-        '<cmd>Trouble work toggle<cr>',
+        '<cmd>Trouble diagnostics toggle<cr>',
         desc = 'Workspace diagnostics (Trouble)',
       },
       {
