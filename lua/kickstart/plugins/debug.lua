@@ -56,9 +56,9 @@ return {
 
     -- Basic debugging keymaps, feel free to change to your liking!
     vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
-    vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
-    vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
-    vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
+    vim.keymap.set('n', '<F10>', dap.step_into, { desc = 'Debug: Step Into' })
+    vim.keymap.set('n', '<F11>', dap.step_over, { desc = 'Debug: Step Over' })
+    vim.keymap.set('n', '<F12>', dap.step_out, { desc = 'Debug: Step Out' })
     vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
     vim.keymap.set('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
@@ -94,6 +94,20 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
+    --dap.configurations.rust = {
+    --  {
+    --    initCommands = function()
+    --      local rustc_sysroot = vim.fn.trim(vim.fn.system 'rustc --print sysroot')
+    --      assert(vim.v.shell_error == 0, 'failed to get rust sysroot:' .. rustc_sysroot)
+    --      local script_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py'
+    --      local commands_file = rustc_sysroot .. '/lib/rustlib/ect/lldb_commands'
+    --      return {
+    --        ([[!command script import '%s']]):format(script_file),
+    --        ([[commands source '%s']]):format(commands_file),
+    --      }
+    --    end,
+    --  },
+    --}
     -- Install golang specific config
     require('dap-go').setup()
   end,

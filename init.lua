@@ -4,10 +4,42 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.o.conceallevel = 1
+vim.opt.spell = true
+vim.opt.spelllang = { 'en_us' }
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
+vim.filetype.add {
+  pattern = {
+    ['.*/.*.bp'] = 'ron',
+    ['.*/.*.tp'] = 'ron',
+    ['.*/.*.sm'] = 'ron',
+    ['.*/.*.cmi'] = 'ron',
+    ['.*/.*.gm'] = 'ron',
+    ['.*/.*.ab'] = 'ron',
+    ['.*/.*.cp'] = 'ron',
+    ['.*/.*.ug'] = 'ron',
+    ['.*/.*.costs'] = 'ron',
+    ['.*/.*.tfi'] = 'ron',
+    ['.*/.*.pal'] = 'ron',
+  },
+}
 
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    vim.defer_fn(function()
+      vim.cmd '!kitty @ set-spacing padding=0'
+    end, 100)
+  end,
+})
+
+vim.api.nvim_create_autocmd('VimLeave', {
+  callback = function()
+    vim.defer_fn(function()
+      vim.cmd 'silent !kitty @ set-spacing padding=8'
+    end, 100)
+  end,
+})
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -57,7 +89,7 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 200
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
@@ -370,6 +402,7 @@ require('lazy').setup({
     config = function(opts)
       require('mason').setup()
       require('mason-lspconfig').setup(opts)
+
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('my-lsp-attach', { clear = true }),
         callback = function(event)
@@ -447,256 +480,6 @@ require('lazy').setup({
       })
     end,
   },
-  --   { -- LSP Configuration & Plugins
-  --   'neovim/nvim-lspconfig',
-  --   dependencies = {
-  --     -- Automatically install LSPs and related tools to stdpath for Neovim
-  --     'williamboman/mason.nvim',
-  --     'williamboman/mason-lspconfig.nvim',
-  --     'WhoIsSethDaniel/mason-tool-installer.nvim',
-  --     -- Useful status updates for LSP.
-  --     -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-  --     --{ 'j-hui/fidget.nvim', opts = {
-  --     --  notification = {
-  --     --    window = {
-  --     --      winblend = 0,
-  --     --    },
-  --     --  },
-  --     --} },
-
-  --     -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-  --     -- used for completion, annotations and signatures of Neovim apis
-  --     { 'folke/neodev.nvim', opts = {} },
-  --   },
-  --   opts = {
-  --     automatic_installation = true,
-  --   },
-  --   config = function(opts)
-  --     require('mason').setup()
-  --     require('mason-lspconfig').setup(opts)
-
-  --     -- vim.api.nvim_create_autocmd('LspAttach', {
-  --     --   group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
-  --     --   callback = function(event)
-  --     --     -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-  --     --     -- to define small helper and utility functions so you don't have to repeat yourself.
-  --     --     --
-  --     --     -- In this case, we create a function that lets us more easily define mappings specific
-  --     --     -- for LSP related items. It sets the mode, buffer and description for us each time.
-  --     --     local map = function(keys, func, desc)
-  --     --       vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-  --     --     end
-  --     --     -- Jump to the definition of the word under your cursor.
-  --     --     --  This is where a variable was first declared, or where a function is defined, etc.
-  --     --     --  To jump back, press <C-t>.
-  --     --     map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-
-  --     --     -- Find references for the word under your cursor.
-  --     --     map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-
-  --     --     -- Jump to the implementation of the word under your cursor.
-  --     --     --  Useful when your language has ways of declaring types without an actual implementation.
-  --     --     map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-
-  --     --     -- Jump to the type of the word under your cursor.
-  --     --     --  Useful when you're not sure what type a variable is and you want to see
-  --     --     --  the definition of its *type*, not where it was *defined*.
-  --     --     map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-
-  --     --     -- Fuzzy find all the symbols in your current document.
-  --     --     --  Symbols are things like variables, functions, types, etc.
-  --     --     map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-
-  --     --     -- Fuzzy find all the symbols in your current workspace.
-  --     --     --  Similar to document symbols, except searches over your entire project.
-  --     --     map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-  --     --     -- Rename the variable under your cursor.
-  --     --     --  Most Language Servers support renaming across files, etc.
-  --     --     map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-
-  --     --     -- Execute a code action, usually your cursor needs to be on top of an error
-  --     --     -- or a suggestion from your LSP for this to activate.
-  --     --     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-  --     --     -- Opens a popup that displays documentation about the word under your cursor
-  --     --     --  See `:help K` for why this keymap.
-  --     --     map('K', vim.lsp.buf.hover, 'Hover Documentation')
-
-  --     --     -- WARN: This is not Goto Definition, this is Goto Declaration.
-  --     --     --  For example, in C this would take you to the header.
-  --     --     map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
-  --     --     map('<C-k>', vim.lsp.buf.signature_help, 'Signature help')
-  --     --     -- The following two autocommands are used to highlight references of the
-  --     --     -- word under your cursor when your cursor rests there for a little while.
-  --     --     --    See `:help CursorHold` for information about when this is executed
-  --     --     --
-  --     --     -- When you move your cursor, the highlights will be cleared (the second autocommand).
-  --     --     local client = vim.lsp.get_client_by_id(event.data.client_id)
-  --     --     if client and client.server_capabilities.documentHighlightProvider then
-  --     --       vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-  --     --         buffer = event.buf,
-  --     --         callback = vim.lsp.buf.document_highlight,
-  --     --       })
-
-  --     --       vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-  --     --         buffer = event.buf,
-  --     --         callback = vim.lsp.buf.clear_references,
-  --     --       })
-  --     --     end
-  --     --     if client and client.name == 'rust_analyzer' then
-  --     --       map('<leader>ca', '<cmd>RustLsp codeAction<cr>', '[C]ode [A]ction')
-  --     --     end
-  --     --   end,
-  --     -- })
-
-  --     -- -- LSP servers and clients are able to communicate to each other what features they support.
-  --     -- --  By default, Neovim doesn't support everything that is in the LSP specification.
-  --     -- --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-  --     -- --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-  --     -- local capabilities = vim.lsp.protocol.make_client_capabilities()
-  --     -- capabilities.textDocument.codeLens = {
-  --     --   dynamicRegistration = true,
-  --     -- }
-  --     -- capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-
-  --     -- -- Enable the following language servers
-  --     -- --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-  --     -- --
-  --     -- --  Add any additional override configuration in the following tables. Available keys are:
-  --     -- --  - cmd (table): Override the default command used to start the server
-  --     -- --  - filetypes (table): Override the default list of associated filetypes for the server
-  --     -- --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-  --     -- --  - settings (table): Override the default settings passed when initializing the server.
-  --     -- --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-
-  --     -- local mason_registry = require 'mason-registry'
-  --     -- local servers = {
-
-  --     --   -- Some languages (like typescript) have entire language plugins that can be useful:
-  --     --   --    https://github.com/pmizio/typescript-tools.nvim
-  --     --   --
-  --     --   -- But for many setups, the LSP (`tsserver`) will work just fine
-  --     --   -- tsserver = {},
-  --     --   --
-  --     --   -- azure_pipelines_ls = {
-  --     --   --   settings = {
-  --     --   --     yaml = {
-  --     --   --       schemas = {
-  --     --   --         ['https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json'] = {
-  --     --   --           '/*',
-  --     --   --         },
-  --     --   --       },
-  --     --   --     },
-  --     --   --   },
-  --     --   -- },
-  --     --   angularls = {
-  --     --     filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx' },
-  --     --     root_dir = require('lspconfig.util').root_pattern('angular.json', '.git'),
-  --     --   },
-  --     --   -- tsserver = {
-  --     --   --   filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx', 'javascript', 'vue' },
-  --     --   --   root_dir = require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', '.git'),
-  --     --   --   init_options = {
-  --     --   --     plugins = {
-  --     --   --       {
-  --     --   --         name = '@vue/typescript-plugin',
-  --     --   --         location = vue_language_server_path,
-  --     --   --         languages = { 'vue' },
-  --     --   --       },
-  --     --   --     },
-  --     --   --   },
-  --     --   -- },
-  --     --   volar = {},
-  --     --   lua_ls = {
-  --     --     -- cmd = {...},
-  --     --     -- filetypes = { ...},
-  --     --     -- capabilities = {},
-  --     --     settings = {
-  --     --       Lua = {
-  --     --         completion = {
-  --     --           callSnippet = 'Replace',
-  --     --         },
-  --     --         -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-  --     --         -- diagnostics = { disable = { 'missing-fields' } },
-  --     --       },
-  --     --     },
-  --     --   },
-
-  --     --   eslint = {
-  --     --     filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'html' },
-  --     --     root_dir = require('lspconfig.util').root_pattern('.eslintrc.js', '.eslintrc.json', '.eslintrc', '.eslintrc.yml', '.eslintrc.yaml', 'package.json'),
-  --     --   },
-  --     --   wgsl_analyzer = {
-  --     --     filetypes = { 'wgsl' },
-  --     --     root_dir = require('lspconfig.util').root_pattern('Cargo.toml', '.git'),
-  --     --   },
-  --     --   --omnisharp = {
-  --     --   --  root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets', '.git'),
-  --     --   --  enable_roslyn_analyzers = true,
-  --     --   --  enable_import_completion = true,
-  --     --   --  handlers = {
-  --     --   --    ['textDocument/definition'] = require('omnisharp_extended').definition_handler,
-  --     --   --    ['textDocument/typeDefinition'] = require('omnisharp_extended').type_definition_handler,
-  --     --   --    ['textDocument/references'] = require('omnisharp_extended').references_handler,
-  --     --   --    ['textDocument/implementation'] = require('omnisharp_extended').implementation_handler,
-  --     --   --  },
-  --     --   --},
-  --     --   --['csharp-language-server'] = {
-  --     --   --  filetypes = { 'csharp' },
-  --     --   --  root_dir = require('lspconfig.util').root_pattern('*.sln', 'Directory.Build.props', 'Directory.Build.targets',
-  --     --   --    '.git'),
-  --     --   --},
-  --     -- }
-
-  --     -- -- Ensure the servers and tools above are installed
-  --     -- --  To check the current status of installed tools and/or manually install
-  --     -- --  other tools, you can run
-  --     -- --    :Mason
-  --     -- --
-  --     -- --  You can press `g?` for help in this menu.
-
-  --     -- -- You can add other tools here that you want Mason to install
-  --     -- -- for you, so that they are available from within Neovim.
-  --     -- local ensure_installed = vim.tbl_keys(servers or {})
-  --     -- vim.list_extend(ensure_installed, {
-  --     --   'stylua', -- Used to format Lua code
-  --     -- })
-  --     -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
-  --     -- servers.cucumber_language_server = {
-
-  --     --   handlers = {
-  --     --     ['workspace/configuration'] = function(param, param2)
-  --     --       return { {
-  --     --         features = { '**/Features/**/*.feature' },
-  --     --         glue = { '**/Steps/**/*.cs' },
-  --     --       } }
-  --     --     end,
-  --     --   },
-  --     -- }
-  --     -- require('mason-lspconfig').setup {
-  --     --   automatic_installation = true,
-  --     --   ensure_installed = {},
-  --     -- }
-  --     -- require('mason-lspconfig').setup_handlers {
-  --     --   -- The first entry (without a key) will be the default handler
-  --     --   -- and will be called for each installed server that doesn't have
-  --     --   -- a dedicated handler.
-  --     --   function(server_name) -- default handler (optional)
-  --     --     require('lspconfig')[server_name].setup {}
-  --     --   end,
-  --     --   -- Next, you can provide a dedicated handler for specific servers.
-  --     --   -- For example, a handler override for the `rust_analyzer`:
-  --     --   ['rust_analyzer'] = function()
-  --     --     require('rust-tools').setup {}
-  --     --   end,
-  --     --   ['c3-lsp'] = {
-  --     --     filetypes = { 'c3' },
-  --     --   },
-  --     -- }
-  --   end,
-  -- },
 
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -739,32 +522,31 @@ require('lazy').setup({
     'hrsh7th/nvim-cmp',
     dependencies = {
 
-      'PasiBergman/cmp-nuget',
       -- Snippet Engine & its associated nvim-cmp source
-      {
-        'L3MON4D3/LuaSnip',
-        build = (function()
-          -- Build Step is needed for regex support in snippets.
-          -- This step is not supported in many windows environments.
-          -- Remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 then
-            return
-          end
-          return 'make install_jsregexp'
-        end)(),
-        dependencies = {
-          -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
-          --    https://github.com/rafamadriz/friendly-snippets
-          {
-            'rafamadriz/friendly-snippets',
-            config = function()
-              require('luasnip.loaders.from_vscode').lazy_load()
-            end,
-          },
-        },
-      },
-      'saadparwaiz1/cmp_luasnip',
+      -- {
+      --   'L3MON4D3/LuaSnip',
+      --   build = (function()
+      --     -- Build Step is needed for regex support in snippets.
+      --     -- This step is not supported in many windows environments.
+      --     -- Remove the below condition to re-enable on windows.
+      --     if vim.fn.has 'win32' == 1 then
+      --       return
+      --     end
+      --     return 'make install_jsregexp'
+      --   end)(),
+      --   dependencies = {
+      --     -- `friendly-snippets` contains a variety of premade snippets.
+      --     --    See the README about individual language/framework/plugin snippets:
+      --     --    https://github.com/rafamadriz/friendly-snippets
+      --     {
+      --       'rafamadriz/friendly-snippets',
+      --       config = function()
+      --         require('luasnip.loaders.from_vscode').lazy_load()
+      --       end,
+      --     },
+      --   },
+      -- },
+      --'saadparwaiz1/cmp_luasnip',
 
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
@@ -775,20 +557,36 @@ require('lazy').setup({
       'hrsh7th/cmp-cmdline',
       'windwp/nvim-autopairs',
       'hrsh7th/cmp-nvim-lsp-signature-help',
+      {
+        'tzachar/cmp-fuzzy-path',
+        dependencies = {
+          'tzachar/fuzzy.nvim',
+        },
+      },
+      'f3fora/cmp-spell',
     },
-    config = function()
+    config = function(opts)
       -- See `:help cmp`
       local cmp = require 'cmp'
-      local luasnip = require 'luasnip'
-      luasnip.config.setup {}
-      local nuget_cmp = require 'cmp-nuget'
-      nuget_cmp.setup {}
-
+      --local luasnip = require 'luasnip'
+      --luasnip.config.setup {}
+      --local nuget_cmp = require 'cmp-nuget'
+      --nuget_cmp.setup {}
+      cmp.setup.cmdline(':', {
+        sources = cmp.config.sources {
+          { name = 'fuzzy_path', option = { fd_timeout_msec = 1500 } },
+        },
+      })
       cmp.setup {
         snippet = {
           expand = function(args)
-            luasnip.lsp_expand(args.body)
+            --luasnip.lsp_expand(args.body)
+            vim.snippet.expand(args.body)
           end,
+        },
+
+        window = {
+          completion = cmp.config.window.bordered(),
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
         -- For an understanding of why these mappings were
@@ -823,31 +621,51 @@ require('lazy').setup({
           --
           -- <c-l> will move you to the right of each of the expansion locations.
           -- <c-h> is similar, except moving you backwards.
-          ['<C-l>'] = cmp.mapping(function()
-            if luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
-            end
-          end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
-            if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
-            end
-          end, { 'i', 's' }),
+          --['<C-l>'] = cmp.mapping(function()
+          --  if luasnip.expand_or_locally_jumpable() then
+          --    luasnip.expand_or_jump()
+          --  end
+          --end, { 'i', 's' }),
+          --['<C-h>'] = cmp.mapping(function()
+          --  if luasnip.locally_jumpable(-1) then
+          --    luasnip.jump(-1)
+          --  end
+          --end, { 'i', 's' }),
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
-        sources = {
+        sources = cmp.config.sources {
           { name = 'nvim_lsp', keyword_length = 0 },
-          { name = 'luasnip', keyword_length = 0 },
-          { name = 'path', keyword_length = 0 },
-          { name = 'nuget', keyword_length = 0 },
+          -- { name = 'luasnip', keyword_length = 0 },
+          {
+            name = 'path',
+            option = {
+              pathMappings = {
+                ['/'] = '${folder}/assets',
+              },
+            },
+          },
+          {
+            name = 'kitty',
+          },
           { name = 'buffer' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'crates' },
           -- { name = 'orgmode' },
           { name = 'neorg' },
           { name = 'render-markdown' },
+          { name = 'fuzzy_path' },
+          {
+            name = 'spell',
+            option = {
+              keep_all_entries = false,
+              enable_in_context = function()
+                return true
+              end,
+              preselect_correct_word = false,
+            },
+          },
         },
       }
       -- cmp.setup.cmdline(':', {
@@ -984,3 +802,5 @@ vim.api.nvim_create_autocmd('RecordingLeave', {
 vim.cmd.colorscheme 'catppuccin-mocha'
 vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'Normal' })
 vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'None' })
+
+--vim.lsp.enable 'ron_lsp'

@@ -1,3 +1,27 @@
+vim.g.rustaceanvim = {
+  tools = {
+    enable_clippy = true,
+  },
+  server = {
+    default_settings = {
+      ['rust-analyzer'] = {
+        checkOnSave = true,
+        check = {
+          command = 'check',
+          workspace = false,
+          allTargets = false,
+        },
+        cargo = {
+          allTargets = false,
+        },
+        procMacro = {
+          enable = true,
+        },
+      },
+    },
+  },
+}
+
 return {
   {
     'saecki/crates.nvim',
@@ -17,12 +41,9 @@ return {
       }
     end,
   },
-  --{
-  --  'mrcjkb/rustaceanvim',
-  --  dependencies = {
-  --    'williamboman/mason.nvim',
-  --  },
-  --  version = '^6',
-  --  lazy = false,
-  --},
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^8',
+    lazy = false,
+  },
 }
