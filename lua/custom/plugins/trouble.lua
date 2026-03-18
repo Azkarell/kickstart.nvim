@@ -1,24 +1,25 @@
 return {
   {
     'folke/trouble.nvim',
-    opts = {
-      modes = {
-        work = {
-          mode = 'diagnostics', -- inherit from diagnostics mode
-          filter = {
-            any = {
-              buf = 0, -- current buffer
-              {
-                severity = vim.diagnostic.severity.ERROR, -- errors only
-                -- limit to files in the current project
-                function(item)
-                  return item.filename:find(vim.loop.cwd(), 1, true)
-                end,
+    specs = {
+      'folke/snacks.nvim',
+      opts = function(_, opts)
+        return vim.tbl_deep_extend('force', opts or {}, {
+          picker = {
+            actions = require('trouble.sources.snacks').actions,
+            win = {
+              input = {
+                keys = {
+                  ['<c-t>'] = {
+                    'trouble_open',
+                    mode = { 'n', 'i' },
+                  },
+                },
               },
             },
           },
-        },
-      },
+        })
+      end,
     },
     keys = {
       {

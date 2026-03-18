@@ -8,14 +8,23 @@ vim.g.rustaceanvim = {
         checkOnSave = true,
         check = {
           command = 'check',
-          workspace = false,
-          allTargets = false,
+          workspace = true,
+          allTargets = true,
         },
         cargo = {
+          targetDir = true,
           allTargets = false,
         },
         procMacro = {
           enable = true,
+        },
+        completion = {
+          fullFunctionSignatures = {
+            enable = true,
+          },
+        },
+        gotoImplementations = {
+          filterAdjacentDervies = true,
         },
       },
     },

@@ -1,5 +1,5 @@
 return {
-  {
-    'nvim-telescope/telescope-media-files.nvim',
-  },
+  --{
+  --  'nvim-telescope/telescope-media-files.nvim',
+  --},
 }
